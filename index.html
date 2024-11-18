@@ -71,6 +71,15 @@
       button:hover {
         background-color: #0056b3;
       }
+
+      .qr-code {
+        margin-top: 20px;
+      }
+
+      .error {
+        color: red;
+        margin-top: 10px;
+      }
     </style>
   </head>
   <body>
@@ -83,12 +92,20 @@
           Generate QR Code
         </button>
       </form>
+      <div class="qr-code" id="qrCodeContainer"></div>
+      <p class="error" id="errorMessage"></p>
     </div>
 
     <script>
       function generateQRCode() {
         var urlInput = document.getElementById("url");
         var urlValue = urlInput.value;
+        var qrCodeContainer = document.getElementById("qrCodeContainer");
+        var errorMessage = document.getElementById("errorMessage");
+
+        // Clear previous results
+        qrCodeContainer.innerHTML = "";
+        errorMessage.textContent = "";
 
         fetch("/generate-qr", {
           method: "POST",
@@ -97,12 +114,25 @@
           },
           body: JSON.stringify({ url: urlValue }),
         })
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to generate QR code");
+            }
+            return response.json();
+          })
           .then((data) => {
-            console.log(data);
+            if (data.qrcode) {
+              // Display the QR code
+              const img = document.createElement("img");
+              img.src = "/qrcodes/" + data.qrcode;
+              img.alt = "Generated QR Code";
+              img.style.maxWidth = "200px";
+              qrCodeContainer.appendChild(img);
+            }
           })
           .catch((error) => {
-            console.error("Error:", error);
+            // Show error message
+            errorMessage.textContent = "Error: " + error.message;
           });
       }
     </script>

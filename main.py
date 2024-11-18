@@ -6,7 +6,12 @@ import qrcode
 
 app = FastAPI()
 
-app.mount("/qrcodes", StaticFiles(directory=Path("qrcodes")), name="qrcodes")
+# Ensure the 'qrcodes' directory exists
+qrcodes_directory = Path("qrcodes")
+qrcodes_directory.mkdir(exist_ok=True)  # Creates the directory if it doesn't exist
+
+# Mount the directory for static file serving
+app.mount("/qrcodes", StaticFiles(directory=qrcodes_directory), name="qrcodes")
 
 
 @app.get("/")
@@ -22,7 +27,7 @@ async def generate_qr_code(request: Request):
         if url:
             img = qrcode.make(url)
             filename = "qrcode.png"
-            img.save("./qrcodes/" + filename)
+            img.save(str(qrcodes_directory / filename))  # Save the QR code in the 'qrcodes' folder
             return {"message": "QR code generated successfully!", "qrcode": filename}
         else:
             raise HTTPException(status_code=422, detail="Invalid data format")
