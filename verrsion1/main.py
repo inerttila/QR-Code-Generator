@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from fastapi.responses import FileResponse
 import qrcode
+import uvicorn  
 
 app = FastAPI()
 
@@ -33,3 +34,7 @@ async def generate_qr_code(request: Request):
             raise HTTPException(status_code=422, detail="Invalid data format")
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, port=8000)

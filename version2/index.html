@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>QR Code</title>
+        <link rel="stylesheet" href="index.css">
+    </head>
+
+    <body>
+        <div class="container">
+           
+            <label for="qrText" ><b>QR CODE GENERATOR</b></label>
+            <input type="text" id="qrText" placeholder="Enter Your Text or URL" required>
+
+            <div id="qrContainer">
+
+            </div>
+
+            <button type="button" class="btn" id="genBtn">Genarate QR Code</button>
+            <a href="" class="btn" id="downloadBtn" download="QRcode.jpg">Download</a>
+        </div>
+
+    </body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.js">
+    </script>
+
+    <script>
+        let qrContainer= document.getElementById ('qrContainer')
+        let qrText= document.getElementById('qrText')
+        let genBtn=document.getElementById('genBtn')
+        let download= document.getElementById('downloadBtn')
+        let qrImage
+
+        genarateQR = (qrtext)=>{
+            qrContainer.innerHTML = ""
+            return new QRCode(qrContainer, {
+            text: qrtext,
+            width: 200,
+            height: 200,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+        }
+
+        downloadQR = ()=>{
+            qrImage = document.querySelector('#qrContainer img')
+
+            let imgSrc = qrImage.getAttribute('src')
+            console.log(imgSrc)
+            downloadBtn.setAttribute("href",imgSrc)
+        }
+
+        genBtn.addEventListener("click",(e)=>{
+            let text = qrText.value 
+            if(text.length>0){
+                qrcode = genarateQR(text)
+            }
+            qrcode = genarateQR(text)
+            qrContainer.classList.add('img-show')
+            downloadBtn.classList.add('download-active')
+        })
+
+        downloadBtn.addEventListener("click",downloadQR)
+    </script>
+</html>
